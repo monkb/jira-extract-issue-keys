@@ -1,5 +1,5 @@
 name: 'Issue Key Extractor'
-description: 'Github Action to extract jira keys from commit messages and output in comma delimited format. Forked from HighwayThree/jira-extract-issue-keys'
+description: 'Github Action to extract jira keys from commit messages and output in comma delimited format.'
 inputs:
   is-pull-request:
     description: 'if true, other input parameters will be ignored and keys from commits associated with pull request will be retrieved and parsed for Jira keys'
