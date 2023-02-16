@@ -50,6 +50,8 @@ async function extractJiraKeysFromCommit() {
       const repo = payload?.repository?.name || "";
       const prNum = payload.number;
 
+      console.log(owner, repo, prNum);
+
       const commits = await getAllCommits(
         octokit,
         { owner, repo, pr: prNum },
