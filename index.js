@@ -25,42 +25,42 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const github = __importStar(require("@actions/github"));
-const matchAll = require("match-all");
 const rest_1 = require("@octokit/rest");
+const _ = __importStar(require("lodash"));
+async function getAllCommits(octokit, { owner, repo, pr }, page) {
+    const list = await octokit.request("GET /repos/{owner}/{repo}/pulls/{pull_number}/commits", {
+        owner,
+        repo,
+        pull_number: pr,
+        page,
+        per_page: 100,
+    });
+    if (list.data.length === 0)
+        return [];
+    return [
+        ...list.data,
+        ...(await getAllCommits(octokit, { owner, repo, pr }, page + 1)),
+    ];
+}
 async function extractJiraKeysFromCommit() {
     try {
-        const regex = /((([A-Z]+)|([0-9]+))+-\d+)/g;
-        const isPullRequest = core.getInput('is-pull-request') == 'true';
-        const payload = github.context.payload;
-        const token = process.env['GITHUB_TOKEN'];
+        const regex = /((([A-Za-z]+)|([0-9]+))+-\d+)/g;
+        const isPullRequest = core.getInput("is-pull-request") === "true";
+        const { payload } = github.context;
+        const token = process.env.GITHUB_TOKEN;
         const octokit = new rest_1.Octokit({
             auth: token,
         });
         if (isPullRequest) {
-            let resultArr = [];
-            const owner = payload?.repository?.owner.login || '';
-            const repo = payload?.repository?.name || '';
+            const owner = payload?.repository?.owner.login || "";
+            const repo = payload?.repository?.name || "";
             const prNum = payload.number;
-            console.log(owner, repo, prNum);
-            const { data } = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/commits', {
-                owner,
-                repo,
-                pull_number: prNum,
-                per_page: 100
-            });
-            console.log(data.map((commit) => commit.commit.message));
-            data.forEach((item) => {
-                const commit = item.commit;
-                const matches = matchAll(commit.message, regex).toArray();
-                matches.forEach((match) => {
-                    if (resultArr.find((element) => element == match)) {
-                    }
-                    else {
-                        resultArr.push(match);
-                    }
-                });
-            });
-            const result = resultArr.join(',');
+            const commits = await getAllCommits(octokit, { owner, repo, pr: prNum }, 1);
+            const result = _.uniq(commits
+                .map(({ commit }) => {
+                return (commit.message.match(regex) || []).filter((match) => match);
+            })
+                .flat()).join(",");
             core.setOutput("jira-keys", result);
         }
     }
@@ -68,7 +68,7 @@ async function extractJiraKeysFromCommit() {
         core.setFailed(error);
     }
 }
-(async function () {
+(async function run() {
     await extractJiraKeysFromCommit();
 })();
 exports.default = extractJiraKeysFromCommit;
