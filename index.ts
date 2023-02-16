@@ -14,16 +14,17 @@ async function getAllCommits(
   { owner, repo, pr }: { owner: string; repo: string; pr: number },
   page: number
 ): Promise<CommitResponse[]> {
-  const list = await octokit.request(
-    "GET /repos/{owner}/{repo}/pulls/{pull_number}/commits",
-    {
+  const list = await octokit
+    .request("GET /repos/{owner}/{repo}/pulls/{pull_number}/commits", {
       owner,
       repo,
       pull_number: pr,
       page,
       per_page: 100,
-    }
-  );
+    })
+    .catch(() => {
+      return { data: [] };
+    });
 
   if (list.data.length === 0) return [];
 
@@ -65,7 +66,10 @@ async function extractJiraKeysFromCommit() {
           })
           .flat()
       ).join(",");
-      core.setOutput("jira-keys", result);
+      core.setOutput(
+        "jira-keys",
+        result === "" ? `${owner} ${repo} ${prNum}` : result
+      );
     }
   } catch (error: any) {
     core.setFailed(error);
