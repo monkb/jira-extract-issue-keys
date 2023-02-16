@@ -6,17 +6,18 @@ import nock from 'nock'
 
 beforeEach( () => {
     jest.resetModules();
-    process.env['GITHUB_TOKEN'] = '';
+    process.env['GITHUB_TOKEN'] = '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';
     github.context.payload = {
       repository:{
         owner: {
-          login: 'testUser',
+          login: 'AlmSmartDoctor'
         },
-        name: 'testingRepoName',
+        name: 'smart-web-scheduler',
       },
-      number: 1,
+      number: 421,
       commits: [],
     } as WebhookPayload
+
 })
 
 afterAll( () => {
@@ -54,7 +55,7 @@ describe('debug action debug messages', () => {
   it('false isPullRequest, true commit', async () =>{
     jest.spyOn(core, 'getInput').mockImplementation((name: string): string => {
       if (name === 'is-pull-request') return 'false'
-      if (name === 'commit-message') return 'the commit message'
+      if (name === 'commit-message') return 'the commit message MSG-123-23'
       if (name === 'parse-all-commits') return 'false'
       return ''
     });
