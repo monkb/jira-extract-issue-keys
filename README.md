@@ -4,7 +4,7 @@ This Github Action parses all the possible issue keys from the commit message.
 
 ## Requirements
 
-Issue keys must use capital letters and must have a dash ('-') between the letters and digits. There should be no spaces between the characters of an issue key.
+Issue keys must have a dash ('-') between the letters and digits. There should be no spaces between the characters of an issue key.
 
 Example: `EXAMPLE-123 TH-1S 1s a commit-1` the only issue key is EXAMPLE-123
 
@@ -48,3 +48,8 @@ with:
 
 An example of a pipeline using this action can be found at: 
 > https://github.com/HighwayThree/jira-github-action-integration-demo/blob/master/.github/workflows/ci.yml
+
+### Referenced by
+
+This project was inspired by the following projects:
+[HighwayThree/jira-extract-issue-keys](https://github.com/HighwayThree/jira-extract-issue-keys)
