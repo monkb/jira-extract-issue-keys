@@ -53,19 +53,21 @@ async function extractJiraKeysFromCommit() {
 
       console.log(owner, repo, prNum);
 
-      const commits = await getAllCommits(
-        octokit,
-        { owner, repo, pr: prNum },
-        1
-      );
+      // const commits = await getAllCommits(
+      //   octokit,
+      //   { owner, repo, pr: prNum },
+      //   1
+      // );
 
-      const result = _.uniq(
-        commits
-          .map(({ commit }) => {
-            return (commit.message.match(regex) || []).filter((match) => match);
-          })
-          .flat()
-      ).join(",");
+      // const result = _.uniq(
+      //   commits
+      //     .map(({ commit }) => {
+      //       return (commit.message.match(regex) || []).filter((match) => match);
+      //     })
+      //     .flat()
+      // ).join(",");
+      const result = "";
+
       core.setOutput(
         "jira-keys",
         result === "" ? `${owner} ${repo} ${prNum}` : result
