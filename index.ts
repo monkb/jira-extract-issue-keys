@@ -53,7 +53,7 @@ async function extractJiraKeysFromCommit() {
 
       core.setOutput("jira-aa", `${owner} ${repo} ${prNum}`);
 
-      console.log(owner, repo, prNum);
+      core.debug(`${owner} ${repo} ${prNum}`);
 
       // const commits = await getAllCommits(
       //   octokit,
@@ -76,11 +76,14 @@ async function extractJiraKeysFromCommit() {
       );
     }
   } catch (error: any) {
+    core.debug(error.message);
     core.setFailed(error);
   }
 }
 
 (async function run() {
+  core.setCommandEcho(true);
+  core.debug("hello world");
   await extractJiraKeysFromCommit();
 })();
 
