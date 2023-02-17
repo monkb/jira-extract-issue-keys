@@ -42,14 +42,16 @@ async function extractJiraKeysFromCommit() {
 
     const token = process.env.GITHUB_TOKEN;
 
-    const octokit = new Octokit({
-      auth: token,
-    });
+    // const octokit = new Octokit({
+    //   auth: token,
+    // });
 
     if (isPullRequest) {
       const owner = payload?.repository?.owner.login || "";
       const repo = payload?.repository?.name || "";
       const prNum = payload.number;
+
+      core.setOutput("jira-aa", `${owner} ${repo} ${prNum}`);
 
       console.log(owner, repo, prNum);
 
